@@ -1,1 +1,27 @@
-// app global css in SCSS form
+.letter-spacing-none {
+  letter-spacing: 0;
+}
+
+
+.top-border {
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+// drawer nav
+.q-drawer {
+  .q-item {
+    opacity: 0.6;
+    &.q-router-link--exact-active {
+      opacity: 1;
+    }
+  }
+}
+
+a:visited {
+  color:white;
+}
+.q-popup-edit__buttons {
+  .q-btn {
+    text-transform: none;
+  }
+}

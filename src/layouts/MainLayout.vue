@@ -1,42 +1,44 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
+  <q-layout view="lHh lpR lFf">
+    <q-header :elevated="useLightOrDark(true, false)">
+      <q-toolbar class="justify-between">
+        <q-btn @click="toggleLeftDrawer" aria-label="Menu" icon="menu" dense flat round />
+        <q-toolbar-title shrink class="q-pr-none" style="padding-left: 90px">
+          PTCGP Tracker
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <div>Welcome, {{ user.username }}!</div>
       </q-toolbar>
     </q-header>
 
     <q-drawer
       v-model="leftDrawerOpen"
+      side="left"
       show-if-above
-      bordered
+      :width="200"
+      :breakpoint="400"
+      class="bg-primary text-grey-4"
     >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+      <div
+        class="absolute-top"
+        style="height: 150px; border-bottom: 1px solid rgba(255, 255, 255, 0.28)"
+      >
+        <div class="q-pa-md absolute-bottom bg-transparent">
+          <q-avatar v-if="user.icon" size="56px" class="q-mb-sm">
+            <img :src="user.icon" />
+          </q-avatar>
+          <q-avatar v-else size="56px" class="q-mb-sm" color="secondary">
+            {{ user.shorthand }}
+          </q-avatar>
+          <div class="text-weight-bold">{{ user.name }}</div>
+          <div>@{{ user.username }}</div>
+        </div>
+      </div>
 
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+      <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px">
+        <q-list>
+          <NavLinks v-for="link in linksList" :key="link.title" v-bind="link" />
+        </q-list>
+      </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
@@ -46,57 +48,59 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+/* imports */
+import { reactive, ref } from 'vue'
+import NavLinks from 'components/nav/NavLinks.vue'
+import { useLightOrDark } from 'src/use/useLightOrDark'
 
+/* navlist */
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: 'Dashboard',
+    icon: 'dashboard',
+    link: '/',
+    separator: true,
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: 'Card Tracker',
+    icon: 'leaderboard',
+    link: '/card-tracker',
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: 'Card Database',
+    icon: 'storage',
+    link: '/card-db',
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    title: 'Deck Builder',
+    icon: 'construction',
+    link: '/decks',
+    separator: true,
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
+    title: 'About',
+    icon: 'info',
+    link: '/about',
   },
   {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
+    title: 'Settings',
+    icon: 'settings',
+    link: '/settings',
   },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
 ]
 
+/* user */
+const user = reactive({
+  name: "Nikki D'Ambra",
+  shorthand: 'ND',
+  username: 'ndambra',
+  icon: '',
+})
+
+/* drawer */
 const leftDrawerOpen = ref(false)
 
-function toggleLeftDrawer () {
+function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>

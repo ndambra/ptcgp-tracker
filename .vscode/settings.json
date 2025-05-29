@@ -3,13 +3,13 @@
   "editor.guides.bracketPairs": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": [
-    "source.fixAll.eslint"
-  ],
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "vue"
-  ]
+  "editor.codeActionsOnSave": ["source.fixAll.eslint"],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
+  "editor.wordWrap": "wordWrapColumn",
+  "javascript.format.semicolons": "insert",
+  "java.edit.smartSemicolonDetection.enabled": true,
+  "html.format.wrapAttributes": "force-aligned",
+  "prettier.singleAttributePerLine": true,
+  "vue.format.wrapAttributes": "force-aligned",
+  "xml.format.splitAttributes": "alignWithFirstAttr"
 }
