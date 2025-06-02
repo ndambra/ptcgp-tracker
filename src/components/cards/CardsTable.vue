@@ -85,7 +85,7 @@ const tableRows = computed(() => {
   else return cardsStore.cards.filter((card) => card.expansion === props.tab)
 })
 const pagination = ref({
-  sortBy: 'desc',
+  sortBy: 'id',
   descending: false,
   page: 1,
   rowsPerPage: 20,

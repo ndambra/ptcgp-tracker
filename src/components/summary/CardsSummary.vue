@@ -1,35 +1,32 @@
 <template>
-  <q-scroll-area class="summary-panel q-pa-md">
-    <div v-if="!cardsStore.isLoading" class="row no-wrap justify-center q-gutter-x-sm">
-      <q-card
-        v-for="exp in summaryStats"
-        :key="exp.code"
-        style="max-width: 270px"
-        :bordered="useLightOrDark(true, false)"
-        flat
-      >
-        <q-card-section class="q-pa-sm">
-          <div class="text-weight-bold text-center">
-            {{ exp.name }}
-          </div>
-          <div class="text-weight-semibold flex no-wrap justify-center">
-            <p>{{ exp.ownCards }}/{{ exp.totalCards }}</p>
-            <p class="text-negative">{{ exp.totalCards - exp.ownCards }}</p>
-          </div>
-        </q-card-section>
-        <q-separator inset />
-        <q-card-section class="flex no-wrap flex-center q-pa-sm">
-          <div v-for="pack in exp.packs" :key="pack" class="flex column flex-center">
-            <q-badge :color="badgeColor(pack)" :label="pack" class="q-pa-sm q-ma-xs" rounded />
-            <div>{{ missingCardsPerPack(exp.code, pack) }}</div>
-          </div>
-        </q-card-section>
-      </q-card>
-    </div>
-    <div v-else>
-      <p>Fetching data....</p>
-    </div>
-  </q-scroll-area>
+  <div v-if="!cardsStore.isLoading" class="row q-gutter-md">
+    <q-card
+      v-for="exp in summaryStats"
+      :key="exp.code"
+      style="max-width: 270px"
+      :bordered="useLightOrDark(true, false)"
+    >
+      <q-card-section class="q-pa-sm">
+        <div class="text-weight-bold text-center">
+          {{ exp.name }}
+        </div>
+        <div class="text-weight-semibold flex no-wrap justify-center">
+          <p>{{ exp.ownCards }}/{{ exp.totalCards }}</p>
+          <p class="text-negative">{{ exp.totalCards - exp.ownCards }}</p>
+        </div>
+      </q-card-section>
+      <q-separator inset />
+      <q-card-section class="flex no-wrap flex-center q-pa-sm">
+        <div v-for="pack in exp.packs" :key="pack" class="flex column flex-center">
+          <q-badge :color="badgeColor(pack)" :label="pack" class="q-pa-sm q-ma-xs" rounded />
+          <div>{{ missingCardsPerPack(exp.code, pack) }}</div>
+        </div>
+      </q-card-section>
+    </q-card>
+  </div>
+  <div v-else>
+    <p>Fetching data....</p>
+  </div>
 </template>
 
 <script setup>

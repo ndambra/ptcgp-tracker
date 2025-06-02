@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { collection, setDoc, doc, query, where, onSnapshot, updateDoc } from 'firebase/firestore'
+import { collection, setDoc, doc, query, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from 'src/js/firebase'
 
 let cardsCollectionRef = collection(db, 'cards')
@@ -15,7 +15,7 @@ export const useCardsStore = defineStore('cards', () => {
   /* getters */
 
   /* actions */
-  const getAllCards = async () => {
+  async function getAllCards() {
     isLoading.value = true
     cardsCollectionQuery = query(cardsCollectionRef)
     getCardsSnapshot = onSnapshot(cardsCollectionQuery, (querySnapshot) => {
@@ -33,8 +33,41 @@ export const useCardsStore = defineStore('cards', () => {
     })
   }
 
-  const getCardsByExpansion = async (exp) => {
-    isLoading.value = true
+  async function addCards(addCards) {
+    if (addCards) {
+      addCards.forEach(async (card) => {
+        const { expansion, id, name, pack, quantity, rarity, type } = card
+        const dbId = expansion.concat('-', id)
+        const cardDataObj = {
+          name,
+          pack,
+          quantity,
+          rarity,
+          expansion,
+          type,
+        }
+        await setDoc(doc(db, 'cards', dbId), cardDataObj)
+      })
+    }
+  }
+
+  function clearCards() {
+    cards.value = []
+    if (getCardsSnapshot) getCardsSnapshot() // unsubscribe from active listeners
+  }
+
+  async function updateCardInfo(cardId, quantity) {
+    const cardRef = doc(cardsCollectionRef, cardId)
+    await updateDoc(cardRef, {
+      quantity,
+    })
+  }
+
+  function getCardsByExpansion(exp) {
+    if (exp === 'all') return cards.value
+    else return cards.value.filter((card) => card.expansion === exp)
+
+    /* isLoading.value = true
 
     cardsCollectionQuery = query(cardsCollectionRef, where('expansion', '==', exp))
     onSnapshot(
@@ -55,37 +88,33 @@ export const useCardsStore = defineStore('cards', () => {
       (error) => {
         console.log('error.message', error.message)
       },
-    )
+    ) */
+  }
+  function missingCards(code, packname) {
+    const expCards = getCardsByExpansion(code)
+    const missingCards = expCards.filter((card) => card.quantity === 0)
+    const packCardsMissing = missingCards.filter((mc) => mc.pack.includes(packname))
+    return packCardsMissing.length
   }
 
-  const addCards = async (cards) => {
-    if (cards) {
-      cards.forEach(async (card) => {
-        const { expansion, id, name, pack, quantity, rarity, type } = card
-        const dbId = expansion.concat('-', id)
-        const cardDataObj = {
-          name,
-          pack,
-          quantity,
-          rarity,
-          expansion,
-          type,
-        }
-        await setDoc(doc(db, 'cards', dbId), cardDataObj)
-      })
+  function getCardsOwnedInExp(exp) {
+    let expCards = getCardsByExpansion(exp)
+    return expCards.filter((card) => card.quantity > 0).length
+  }
+
+  function getExpCardCount(exp) {
+    if (exp && !isLoading.value) {
+      let expCards = getCardsByExpansion(exp)
+      return expCards.length
     }
+    return 0
   }
 
-  const clearCards = () => {
-    cards.value = []
-    if (getCardsSnapshot) getCardsSnapshot() // unsubscribe from active listeners
-  }
-
-  const updateCardInfo = async (cardId, quantity) => {
-    const cardRef = doc(cardsCollectionRef, cardId)
-    await updateDoc(cardRef, {
-      quantity,
-    })
+  function missingCardsPerPack(code, packname) {
+    const expCards = getCardsByExpansion(code)
+    const missingCards = expCards.filter((card) => card.quantity === 0)
+    const packCardsMissing = missingCards.filter((mc) => mc.pack.includes(packname))
+    return packCardsMissing.length
   }
 
   /* return */
@@ -100,5 +129,9 @@ export const useCardsStore = defineStore('cards', () => {
     addCards,
     clearCards,
     updateCardInfo,
+    missingCards,
+    getExpCardCount,
+    getCardsOwnedInExp,
+    missingCardsPerPack,
   }
 })
