@@ -1,24 +1,24 @@
 <template>
-  <q-page class="flex column items-center q-pa-sm">
+  <q-page class="flex column items-center q-pa-md">
     <div class="q-my-md">
       <div class="text-h6 text-center">Dashboard</div>
+      <!-- <q-btn @click="addDocs" label="add" /> -->
       <q-separator class="text-separator" />
     </div>
     <cards-summary />
-    <expansion-tabs />
   </q-page>
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import CardsSummary from '/src/components/summary/CardsSummary.vue'
-import ExpansionTabs from '/src/components/cards/ExpansionTabs.vue'
-// import { useCardsStore } from 'src/stores/cardsStore'
+/* bulk add new cards -- uncomment below to add new cards (DEV ONLY) */
 // import { allCards } from '/src/js/all-cards-db.js'
 
-// const cardsStore = useCardsStore()
-
 // const addDocs = () => {
-//   const expCards = allCards.filter((card) => card.expansion === 'promo')
+//   const expCards = allCards.filter((card) => card.expansion === 'a3')
 //   cardsStore.addCards(expCards)
 // }
+
+onMounted(() => {})
 </script>

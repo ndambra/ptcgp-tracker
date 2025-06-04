@@ -25,7 +25,6 @@
               <q-item
                 v-if="props.row.quantity <= 0"
                 clickable
-                v-close-popup
                 @click="updateCardCount(props.row, 1)"
               >
                 <q-item-section side>
@@ -35,7 +34,7 @@
                   <q-item-label>Own</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item v-else clickable v-close-popup @click="updateCardCount(props.row, 0)">
+              <q-item v-else clickable @click="updateCardCount(props.row, 0)">
                 <q-item-section side>
                   <q-icon size="xs" color="red" name="cancel" />
                 </q-item-section>
@@ -44,7 +43,7 @@
                 </q-item-section>
               </q-item>
               <q-separator />
-              <q-item clickable v-close-popup @click="increaseCardCount(props.row)">
+              <q-item clickable @click="increaseCardCount(props.row)">
                 <q-item-section side>
                   <q-icon size="xs" color="green" name="add_circle_outline" />
                 </q-item-section>
@@ -52,7 +51,7 @@
                   <q-item-label>Add 1</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item clickable v-close-popup @click="decreaseCardCount(props.row)">
+              <q-item clickable @click="decreaseCardCount(props.row)">
                 <q-item-section side>
                   <q-icon size="xs" color="red" name="remove_circle_outline" />
                 </q-item-section>
@@ -85,7 +84,7 @@ const tableRows = computed(() => {
   else return cardsStore.cards.filter((card) => card.expansion === props.tab)
 })
 const pagination = ref({
-  sortBy: 'desc',
+  sortBy: 'id',
   descending: false,
   page: 1,
   rowsPerPage: 20,
@@ -93,17 +92,18 @@ const pagination = ref({
 
 // methods
 const increaseCardCount = (row) => {
-  const quantity = row.quantity + 1
+  const quantity = ++row.quantity
   updateCardCount(row, quantity)
 }
 
 const decreaseCardCount = (row) => {
-  const quantity = row.quantity - 1
+  const quantity = --row.quantity
   updateCardCount(row, quantity)
 }
 
 const updateCardCount = (cardInfo, quantity) => {
   const cardId = cardInfo.expansion.concat('-', cardInfo.id)
+  cardInfo.quantity = quantity
   cardsStore.updateCardInfo(cardId, quantity)
 }
 </script>
