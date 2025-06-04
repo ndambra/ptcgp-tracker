@@ -10,15 +10,15 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import CardsSummary from '/src/components/summary/CardsSummary.vue'
 /* bulk add new cards -- uncomment below to add new cards (DEV ONLY) */
-// import { useCardsStore } from 'src/stores/cardsStore'
 // import { allCards } from '/src/js/all-cards-db.js'
-
-// const cardsStore = useCardsStore()
 
 // const addDocs = () => {
 //   const expCards = allCards.filter((card) => card.expansion === 'a3')
 //   cardsStore.addCards(expCards)
 // }
+
+onMounted(() => {})
 </script>

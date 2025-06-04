@@ -6,7 +6,16 @@
         <q-toolbar-title shrink class="q-pr-none" style="padding-left: 90px">
           PTCGP Tracker
         </q-toolbar-title>
-        <div>Welcome, {{ user.username }}!</div>
+        <div>
+          <q-btn
+            v-if="authStore.user.id"
+            flat
+            color="white"
+            label="Logout"
+            no-caps
+            @click="authStore.logoutUser"
+          />
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -22,15 +31,18 @@
         class="absolute-top"
         style="height: 150px; border-bottom: 1px solid rgba(255, 255, 255, 0.28)"
       >
-        <div class="q-pa-md absolute-bottom bg-transparent">
-          <q-avatar v-if="user.icon" size="56px" class="q-mb-sm">
-            <img :src="user.icon" />
+        <div v-if="authStore.user.id" class="q-pa-md absolute-bottom bg-transparent">
+          <q-avatar v-if="authStore.user.photoURL" size="56px" class="q-mb-sm">
+            <img :src="authStore.user.photoURL" />
           </q-avatar>
           <q-avatar v-else size="56px" class="q-mb-sm" color="secondary">
-            {{ user.shorthand }}
+            {{ shorthand }}
           </q-avatar>
-          <div class="text-weight-bold">{{ user.name }}</div>
-          <div>@{{ user.username }}</div>
+          <div class="text-weight-bold">{{ authStore.user.email }}</div>
+          <div>@{{ authStore.user.displayName }}</div>
+        </div>
+        <div v-else>
+          <q-btn flat color="white" label="Login" no-caps />
         </div>
       </div>
 
@@ -49,9 +61,10 @@
 
 <script setup>
 /* imports */
-import { reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
 import NavLinks from 'components/nav/NavLinks.vue'
 import { useLightOrDark } from 'src/use/useLightOrDark'
+import { useAuthStore } from 'src/stores/authStore'
 
 /* navlist */
 const linksList = [
@@ -90,11 +103,14 @@ const linksList = [
 ]
 
 /* user */
-const user = reactive({
-  name: "Nikki D'Ambra",
-  shorthand: 'ND',
-  username: 'ndambra',
-  icon: '',
+const authStore = useAuthStore()
+
+const shorthand = computed(() => {
+  if (authStore.user.displayName) {
+    return authStore.user.displayName[0]
+  } else {
+    return authStore.user.email[0].toUpperCase()
+  }
 })
 
 /* drawer */

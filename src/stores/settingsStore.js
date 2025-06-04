@@ -1,18 +1,16 @@
 import { defineStore } from 'pinia'
-import { reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { Dark, LocalStorage } from 'quasar'
-
-const defaultSettings = reactive({
-  darkMode: true,
-})
 
 export const useSettingsStore = defineStore('settings', () => {
   /* state */
-  const settings = ref({})
+  const settings = reactive({
+    darkMode: true,
+  })
 
   // watch darkMode
   watch(
-    () => settings.value.darkMode,
+    () => settings.darkMode,
     (value) => Dark.set(value),
     { immediate: true },
   )
@@ -32,7 +30,6 @@ export const useSettingsStore = defineStore('settings', () => {
   const loadSettings = () => {
     const savedSettings = LocalStorage.getItem('settings')
     if (savedSettings) Object.assign(settings, savedSettings)
-    else Object.assign(settings, defaultSettings)
   }
 
   /* return */

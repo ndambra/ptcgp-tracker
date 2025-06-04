@@ -2,6 +2,10 @@
   <q-page class="q-ma-md">
     <div class="text-h6 text-center">Settings</div>
     <q-list bordered padding>
+      <!-- User Profile -->
+      <q-item-label header>Profile</q-item-label>
+
+      <q-separator spaced />
       <!-- Card Table -->
       <q-item-label header>Table</q-item-label>
 
