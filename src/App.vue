@@ -3,18 +3,18 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { useAuthStore } from './stores/authStore'
-import { useSettingsStore } from 'src/stores/settingsStore'
-import { useCardsStore } from 'src/stores/cardsStore'
+import { onMounted } from "vue";
+import { useAuthStore } from "./stores/authStore";
+import { useSettingsStore } from "src/stores/settingsStore";
+import { useCardsStore } from "src/stores/cardsStore";
 
-const authStore = useAuthStore()
-const settingsStore = useSettingsStore()
-const cardsStore = useCardsStore()
+const authStore = useAuthStore();
+const settingsStore = useSettingsStore();
+const cardsStore = useCardsStore();
 
 onMounted(() => {
-  authStore.init()
-  settingsStore.loadSettings()
-  cardsStore.getAllCards()
-})
+  authStore.init();
+  settingsStore.loadSettings();
+  cardsStore.fetchInitialData();
+});
 </script>

@@ -11,8 +11,8 @@
           {{ exp.name }}
         </div>
         <div class="text-weight-semibold flex no-wrap justify-center">
-          <p>{{ exp.ownCards }}/{{ exp.totalCards }}</p>
-          <p class="text-negative">{{ exp.totalCards - exp.ownCards }}</p>
+          <p>{{ getCardsOwned(exp) }}</p>
+          <p class="text-negative">{{ getTotalMissingCards(exp) }}</p>
         </div>
       </q-card-section>
       <q-separator inset />
@@ -49,6 +49,14 @@ expansions.forEach((exp) => {
   }
   summaryStats.value.push(summary)
 })
+
+const getCardsOwned = (exp) => {
+  return `${exp.ownCards} / ${exp.totalCards}`
+}
+
+const getTotalMissingCards = (exp) => {
+  return exp.totalCards - exp.ownCards
+}
 
 const missingCardsPerPack = (code, packname) => {
   const expCards = cardsStore.cards.filter((card) => card.expansion === code)
