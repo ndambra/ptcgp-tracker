@@ -5,65 +5,97 @@ import {
   setDoc,
   doc,
   getDocs,
+  getDocsFromServer,
   updateDoc,
-  // getDocsFromServer,
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "src/js/firebase";
+import { useAuthStore } from "./authStore";
 
 let cardsCollectionRef = collection(db, "cards");
+let cardsQuerySnapshot = null;
+let usersCollectionRef = null;
+const needsUpdate = false;
 
 export const useCardsStore = defineStore("cards", () => {
   /* state */
   const cards = ref([]);
-  const expansions = ref([]);
   const isLoading = ref(false);
 
   /* getters */
-
   /* actions */
   async function fetchInitialData() {
     isLoading.value = true;
-    // const querySnapshot = await getDocsFromServer(cardsCollectionRef);
-    const querySnapshot = await getDocs(cardsCollectionRef);
+    if (needsUpdate) {
+      console.log("fetch All Cards from Server");
+      cardsQuerySnapshot = await getDocsFromServer(cardsCollectionRef);
+    } else {
+      console.log("fetch All Cards from Cache");
+      cardsQuerySnapshot = await getDocs(cardsCollectionRef);
+    }
 
     const expansionsDb = [];
-    querySnapshot.forEach((doc) => {
+    cardsQuerySnapshot.forEach((doc) => {
       const exp = {
         ...doc.data(),
         id: doc.id,
       };
       expansionsDb.push(exp);
     });
-    expansions.value = expansions;
-    getAllCards();
-    isLoading.value = false;
+    this.getUsersCards(expansionsDb);
   }
 
-  function getAllCards() {
-    const allCards = [];
-    // const expId = doc.id.split("-");
-    // const cardDataObj = {
-    //   ...doc.data(),
-    //   id: expId[1],
-    // };
-    // allCards.push(cardDataObj);
-    cards.value = allCards;
-  }
-  async function addCards(addCards) {
-    if (addCards) {
-      addCards.forEach(async (card) => {
-        const { expansion, id, name, pack, quantity, rarity, type } = card;
-        const dbId = expansion.concat("-", id);
-        const cardDataObj = {
-          name,
-          pack,
-          quantity,
-          rarity,
-          expansion,
-          type,
-        };
-        await setDoc(doc(db, "cards", dbId), cardDataObj);
+  async function getUsersCards(expansionsDb) {
+    const authStore = useAuthStore();
+    if (authStore.user.id) {
+      usersCollectionRef = collection(db, "users", authStore.user.id, "cards");
+      let allCards = [];
+
+      onSnapshot(usersCollectionRef, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          let cardsToAdd = [];
+          let usersCards = doc.data().cards;
+          cardsToAdd.push(usersCards);
+
+          let currExp = expansionsDb.filter(
+            (expansion) => expansion.id === doc.id,
+          )[0];
+
+          // Loop through all the expansions set of cards
+          currExp.cards.forEach((card) => {
+            // console.log("exp card: ", card);
+            let cardQty = 0;
+            let userCard = usersCards.find((c) => c.cardId === card.id);
+            if (userCard) {
+              // console.log("userCard", userCard);
+              cardQty = userCard.quantity;
+            } else {
+              cardsToAdd.push({
+                cardId: card.id,
+                quantity: cardQty,
+              });
+            }
+            allCards.push({
+              ...card,
+              quantity: cardQty,
+            });
+          });
+          // console.log("Cards to Add", doc.id, cardsToAdd);
+        });
+        cards.value = allCards;
+        isLoading.value = false;
       });
+    }
+  }
+
+  async function addCards(addCards, expId) {
+    if (addCards) {
+      console.log("expId", expId);
+      console.log("addCards", addCards);
+      let newObj = {
+        cards: addCards,
+      };
+      await setDoc(doc(db, "cards", expId), newObj);
     }
   }
 
@@ -119,6 +151,7 @@ export const useCardsStore = defineStore("cards", () => {
     /* actions */
     fetchInitialData,
     getCardsByExpansion,
+    getUsersCards,
     addCards,
     updateCardInfo,
     missingCards,

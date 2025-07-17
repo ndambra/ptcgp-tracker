@@ -1,10 +1,12 @@
 <template>
-  <div v-if="!cardsStore.isLoading" class="row q-gutter-md">
+  <div
+    v-if="!cardsStore.isLoading"
+    class="row q-gutter-md"
+  >
     <q-card
       v-for="exp in summaryStats"
       :key="exp.code"
       style="max-width: 270px"
-      :bordered="useLightOrDark(true, false)"
     >
       <q-card-section class="q-pa-sm">
         <div class="text-weight-bold text-center">
@@ -17,8 +19,17 @@
       </q-card-section>
       <q-separator inset />
       <q-card-section class="flex no-wrap flex-center q-pa-sm">
-        <div v-for="pack in exp.packs" :key="pack" class="flex column flex-center">
-          <q-badge :color="badgeColor(pack)" :label="pack" class="q-pa-sm q-ma-xs" rounded />
+        <div
+          v-for="pack in exp.packs"
+          :key="pack"
+          class="flex column flex-center"
+        >
+          <q-badge
+            :color="badgeColor(pack)"
+            :label="pack"
+            class="q-pa-sm q-ma-xs"
+            rounded
+          />
           <div>{{ missingCardsPerPack(exp.code, pack) }}</div>
         </div>
       </q-card-section>
@@ -30,40 +41,46 @@
 </template>
 
 <script setup>
-import { expansions, badgeColor } from '/src/js/constant.js'
-import { ref } from 'vue'
-import { useLightOrDark } from 'src/use/useLightOrDark'
-import { useCardsStore } from 'src/stores/cardsStore'
+import { expansions, badgeColor } from "/src/js/constant.js";
+import { computed } from "vue";
+import { useCardsStore } from "src/stores/cardsStore";
 
-const cardsStore = useCardsStore()
-const summaryStats = ref([])
-
-expansions.forEach((exp) => {
-  const expCards = cardsStore.cards.filter((card) => card.expansion === exp.code)
-  const cardsOwned = expCards.filter((card) => card.quantity > 0).length
-
-  const summary = {
-    ...exp,
-    totalCards: expCards.length,
-    ownCards: cardsOwned,
-  }
-  summaryStats.value.push(summary)
-})
+const cardsStore = useCardsStore();
 
 const getCardsOwned = (exp) => {
-  return `${exp.ownCards} / ${exp.totalCards}`
-}
+  return `${exp.ownCards} / ${exp.totalCards}`;
+};
 
 const getTotalMissingCards = (exp) => {
-  return exp.totalCards - exp.ownCards
-}
+  return exp.totalCards - exp.ownCards;
+};
 
 const missingCardsPerPack = (code, packname) => {
-  const expCards = cardsStore.cards.filter((card) => card.expansion === code)
-  const missingCards = expCards.filter((card) => card.quantity === 0)
-  const packCardsMissing = missingCards.filter((mc) => mc.pack.includes(packname))
-  return packCardsMissing.length
-}
+  const expCards = cardsStore.cards.filter((card) => card.expansion === code);
+  const missingCards = expCards.filter((card) => card.quantity === 0);
+  const packCardsMissing = missingCards.filter((mc) =>
+    mc.pack.includes(packname),
+  );
+  return packCardsMissing.length;
+};
+
+const summaryStats = computed(() => {
+  const stats = [];
+  expansions.forEach((exp) => {
+    const expCards = cardsStore.cards.filter(
+      (card) => card.expansion === exp.code,
+    );
+    const cardsOwned = expCards.filter((card) => card.quantity > 0).length;
+
+    const summary = {
+      ...exp,
+      totalCards: expCards.length,
+      ownCards: cardsOwned,
+    };
+    stats.push(summary);
+  });
+  return stats;
+});
 </script>
 
 <style scoped>
@@ -77,5 +94,9 @@ const missingCardsPerPack = (code, packname) => {
 p {
   margin: 0;
   padding: 0 12px;
+}
+
+.q-card--dark {
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 }
 </style>

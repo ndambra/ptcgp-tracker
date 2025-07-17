@@ -8,8 +8,5 @@
   "editor.wordWrap": "wordWrapColumn",
   "javascript.format.semicolons": "insert",
   "java.edit.smartSemicolonDetection.enabled": true,
-  "html.format.wrapAttributes": "force-aligned",
-  "prettier.singleAttributePerLine": true,
-  "vue.format.wrapAttributes": "force-aligned",
-  "xml.format.splitAttributes": "alignWithFirstAttr"
+  "prettier.singleAttributePerLine": true
 }

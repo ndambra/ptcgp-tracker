@@ -123,7 +123,7 @@
 </template>
 <script setup>
 /* imports */
-import { computed, ref } from "vue";
+import { ref, computed } from "vue";
 import { columns } from "src/js/table-constants.js";
 import { badgeColor } from "src/js/constant.js";
 import { useCardsStore } from "src/stores/cardsStore";
@@ -142,7 +142,7 @@ const pagination = ref({
   sortBy: "id",
   descending: false,
   page: 1,
-  rowsPerPage: 0,
+  rowsPerPage: 20,
 });
 
 // methods
